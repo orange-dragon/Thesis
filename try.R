@@ -5,7 +5,7 @@
 #########   1  Eastern Mediterranean ---- response index
 #########
 
-#library(dslabs)#Data Science Labs,但是不存在这个package的函数
+library(dslabs)
 library(dplyr)
 library(lubridate)
 library(ggplot2)#高级绘图包
@@ -44,29 +44,18 @@ print(p3)
 
 ### "Iran","Saudi Arabia","Pakistan","Iraq","Qatar","Egypt"   
 
-Iran = filter(data,data$Entity=="Iran")
+Iran =data1[which(data1 $ Entity=="Iran"),] 
+rownames(Iran) <- NULL  
 colnames(Iran)[4] <- 'Iran_Index' 
-Iran = Iran %>% select(Date,Iran_Index) 
+Iran = Iran %>% select(Day,Iran_Index) 
 
-Saudi_Arabia = filter(data,data$Entity=="Saudi Arabia")
-colnames(Saudi_Arabia)[4] <- 'Saudi_Arabia_index' 
-Saudi_Arabia = Saudi_Arabia %>% select(Date,Saudi_Arabia_index) 
-
-Pakistan = filter(data,data$Entity=="Pakistan")
-colnames(Pakistan)[4] <- 'Pakistan_index' 
-Pakistan = Pakistan %>% select(Date,Pakistan_index) 
-
-Iraq = filter(data,data$Entity=="Iraq")
-colnames(Iraq)[4] <- 'Iraq_Index' 
-Iraq = Iraq %>% select(Date,Iraq_Index) 
-
-Qatar = filter(data,data$Entity=="Qatar")
-colnames(Qatar)[4] <- 'Qatar_Index' 
-Qatar = Qatar %>% select(Date,Qatar_Index) 
-
-Egypt = filter(data,data$Entity=="Egypt")
+Egypt =data1[which(data1 $ Entity=="Egypt"),] 
+rownames(Egypt) <- NULL  
 colnames(Egypt)[4] <- 'Egypt_Index' 
-Egypt = Egypt %>% select(Date,Egypt_Index) 
+Egypt = Egypt %>% select(Day,Egypt_Index) 
+
+###Adding the remaining countries
+
 
 # Define a function-multimerge
 multimerge<-function(dat=list(),...){
@@ -79,26 +68,21 @@ multimerge<-function(dat=list(),...){
   return(mergedat)
 }
 
-East_Medit6<- multimerge(list(Iran,Saudi_Arabia, Pakistan, Iraq, Qatar, Egypt))             
+East_Medit6<- multimerge(list(Iran, Egypt))             
 
-install.packages("lubridate")
 library(lubridate)
-East_Medit6$Date <- lubridate::dmy(East_Medit6$Date)
+East_Medit6$Day <- lubridate::ymd(East_Medit6$Day)
 
 write.csv(East_Medit6, file="EM_Index.csv")  
 
 library(ggplot2)
 
-vd = rbind(data.frame(v=East_Medit6$Date, y=East_Medit6$Iran_Index, type=as.factor(1)), 
-           data.frame(v=East_Medit6$Date, y=East_Medit6$Saudi_Arabia_index, type=as.factor(2)),
-           data.frame(v=East_Medit6$Date, y=East_Medit6$Pakistan_index, type=as.factor(3)), 
-           data.frame(v=East_Medit6$Date, y=East_Medit6$Iraq_Index, type=as.factor(4)), 
-           data.frame(v=East_Medit6$Date, y=East_Medit6$Qatar_Index, type=as.factor(5)),
-           data.frame(v=East_Medit6$Date, y=East_Medit6$Egypt_Index, type=as.factor(6)))
+vd = rbind(data.frame(v=East_Medit6$Day, y=East_Medit6$Iran_Index, type=as.factor(1)), 
+           data.frame(v=East_Medit6$Day, y=East_Medit6$Egypt_Index, type=as.factor(2)))
 
 ggplot(vd,aes(x=v,y=y,shape=type,color=type,group=type))+geom_point()+labs(title="Covid-19 Response Stringency Index")+xlab("Date")+ylab("Response Stringency Index")+scale_shape_manual(values=c(1,4,5,7,9,11))+scale_color_manual(values=c(1:6))+theme(plot.title=element_text(hjust=0.5))+geom_line()
 dev.off()
-
+###The two expressions are similar
 ggplot(vd,aes(x=v,y=y,shape=type,color=type,group=type))+labs(title="Covid-19 Response Stringency Index")+xlab("Date")+ylab("Response Stringency Index")+scale_shape_manual(values=c(1,4,5,7,9,11))+scale_color_manual(values=c(1:6))+theme(plot.title=element_text(hjust=0.5))+geom_line(size=1.0,shape=4)
 dev.off()
 
@@ -186,8 +170,6 @@ multimerge<-function(dat=list(),...){
 EM_permillon6<- multimerge(list(Iran,Saudi_Arabia, Pakistan, Iraq, Qatar, Egypt))             
 write.csv(EM_permillon6, file="EM_permillon6.csv") 
 
-East_Medit6 EM_permillon6
-#install.packages("lubridate")
 library(lubridate)
 East_Medit6$Date <- lubridate::dmy(East_Medit6$Date)
 
@@ -294,6 +276,7 @@ write.csv(EM_totalcase6, file="EM_totalcase6.csv")
 
 
 EM_Index <- read.csv("EM_Index.csv")
+##Remove the first column
 EM_Index<- EM_Index[,-1]
 EM_Index_mean <- apply(EM_Index[1:419,2:7], 2, mean,na.rm=T)  
 EM_Index_mean   
