@@ -47,7 +47,8 @@ print(p3)
 Brazil =data1[which(data1 $ Entity=="Brazil"),] 
 rownames(Brazil) <- NULL  
 colnames(Brazil)[4] <- 'Brazil_Index' 
-Brazil = Brazil %>% select(Day,Brazil_Index) 
+Brazil = Brazil %>% select(Day,Brazil_Index)
+write.csv(data1, file="Brazil.csv") 
 
 Argentina =data1[which(data1 $ Entity=="Argentina"),] 
 rownames(Argentina) <- NULL  
@@ -96,7 +97,7 @@ write.csv(Latin6, file="Latin_Index.csv")
 library(ggplot2)
 
 vd = rbind(data.frame(v=Latin6$Day, y=Latin6$Brazil_Index, type=as.factor(1)), 
-           data.frame(v=Latin6$Day, y=Latin6$Argentinagypt_Index, type=as.factor(2)),
+           data.frame(v=Latin6$Day, y=Latin6$Argentina_Index, type=as.factor(2)),
            data.frame(v=Latin6$Day, y=Latin6$Colombia_Index, type=as.factor(3)),
            data.frame(v=Latin6$Day, y=Latin6$Mexico_Index, type=as.factor(4)),
            data.frame(v=Latin6$Day, y=Latin6$Peru_Index, type=as.factor(5)),
@@ -118,7 +119,7 @@ dev.off()
 # The data download from https://github.com/owid/covid-19-data/tree/master/public/data/owid-covid-data.csv
 data<-read.csv("owid-covid-data.csv")   
 data$location 
-colnames(data)[11] <- 'Cases_per_million'  
+colnames(data)[10] <- 'Cases_per_million'  
 
 Latin <- c("Brazil","Argentina","Colombia","Mexico","Peru","Chile") 
 
@@ -142,6 +143,7 @@ print(p2)
 ## Density Plot 
 p3 = ggplot(Latin_permillon1,aes(Cases_per_million,col=location)) +geom_density() + 
   facet_wrap(~location,nrow = 2)  
+print(p3)
 
 #######  2.2  The line chart
 
@@ -149,8 +151,8 @@ library(dplyr)
 
 ### "Brazil","Argentina","Colombia","Mexico","Peru","Chile" 
 data<-read.csv("owid-covid-data.csv")   
-colnames(data)[3] <- 'Entity'   
-colnames(data)[4] <- 'Date'   
+colnames(data)[2] <- 'Entity'   
+colnames(data)[3] <- 'Date' 
 
 Brazil = filter(data,data$Entity=="Brazil")  
 colnames(Brazil)[11] <- 'Brazil_Index'       
@@ -188,25 +190,24 @@ multimerge<-function(dat=list(),...){
   return(mergedat)
 }
 
-EM_permillon6<- multimerge(list(Brazil,Argentina,Colombia,Mexico,Peru,Chile))             
+Latin_permillon6<- multimerge(list(Brazil,Argentina,Colombia,Mexico,Peru,Chile))             
 write.csv(Latin_permillon6, file="Latin_permillon6.csv") 
 
 library(lubridate)
-Latin6$Date <- lubridate::dmy(Latin6$Date)
+Latin_permillon6$Date <- lubridate::ymd(Latin_permillon6$Date)
 
-Latin6 <- Latin6[,-1]  
 
 library(ggplot2)
-vd = rbind(data.frame(v=Latin6$Date, y=Latin6$Brazil_Index, type=as.factor(1)), 
-           data.frame(v=Latin6$Date, y=Latin6$Argentina_index, type=as.factor(2)),
-           data.frame(v=Latin6$Date, y=Latin6$Colombia_index, type=as.factor(3)), 
-           data.frame(v=Latin6$Date, y=Latin6$Mexico_Index, type=as.factor(4)), 
-           data.frame(v=Latin6$Date, y=Latin6$Peru_Index, type=as.factor(5)),
-           data.frame(v=Latin6$Date, y=Latin6$Chile_Index, type=as.factor(6)))
+vd = rbind(data.frame(v=Latin_permillon6$Date, y=Latin_permillon6$Brazil_Index, type=as.factor(1)), 
+           data.frame(v=Latin_permillon6$Date, y=Latin_permillon6$Argentina_index, type=as.factor(2)),
+           data.frame(v=Latin_permillon6$Date, y=Latin_permillon6$Colombia_index, type=as.factor(3)), 
+           data.frame(v=Latin_permillon6$Date, y=Latin_permillon6$Mexico_Index, type=as.factor(4)), 
+           data.frame(v=Latin_permillon6$Date, y=Latin_permillon6$Peru_Index, type=as.factor(5)),
+           data.frame(v=Latin_permillon6$Date, y=Latin_permillon6$Chile_Index, type=as.factor(6)))
 
 ggplot(vd,aes(x=v,y=y,shape=type,color=type,group=type))+geom_point()+labs(title="Total confirmed cases of COVID-19 per million people ")+xlab("Date")+ylab("Total confirmed cases per million")+scale_shape_manual(values=c(1,4,5,7,9,11))+scale_color_manual(values=c(1:6))+theme(plot.title=element_text(hjust=0.5))+geom_line()
 
-ggplot(vd,aes(x=v,y=y,shape=type,color=type,group=type))+labs(title="Total confirmed cases of COVID-19 per million people")+xlab("Date")+ylab("Total confirmed cases per million")+scale_shape_manual(values=c(1,4,5,7,9,11))+scale_color_manual(values=c(1:6))+theme(plot.title=element_text(hjust=0.5))+geom_line(size=1.5,shape=4)
+ggplot(vd,aes(x=v,y=y,shape=type,color=type,group=type))+labs(title="Total confirmed cases of COVID-19 per million people")+xlab("Date")+ylab("Total confirmed cases per million")+scale_shape_manual(values=c(1,4,5,7,9,11))+scale_color_manual(values=c(1:6))+theme(plot.title=element_text(hjust=0.5))+geom_line(size=0.5,shape=4)
 dev.off()
 
 
@@ -255,27 +256,27 @@ data <- Latin_totalcase1
 ### "Brazil","Argentina","Colombia","Mexico","Peru","Chile"
 
 Brazil = filter(data,data$Entity=="Brazil")
-colnames(Brazil)[4] <- 'Brazil_total' 
+colnames(Brazil)[3] <- 'Brazil_total' 
 Brazil = Brazil %>% select(Date,Brazil_total) 
 
 Argentina = filter(data,data$Entity=="Argentina")
-colnames(Argentina)[4] <- 'Argentina_total' 
+colnames(Argentina)[3] <- 'Argentina_total' 
 Argentina = Argentina %>% select(Date,Argentina_total) 
 
 Colombia = filter(data,data$Entity=="Colombia")
-colnames(Colombia)[4] <- 'Colombia_total' 
+colnames(Colombia)[3] <- 'Colombia_total' 
 Colombia = Colombia %>% select(Date,Colombia_total) 
 
 Mexico = filter(data,data$Entity=="Mexico")
-colnames(Mexico)[4] <- 'Mexico_total' 
+colnames(Mexico)[3] <- 'Mexico_total' 
 Mexico = Mexico %>% select(Date,Mexico_total) 
 
 Peru = filter(data,data$Entity=="Peru")
-colnames(Peru)[4] <- 'Peru_total' 
+colnames(Peru)[3] <- 'Peru_total' 
 Peru = Peru %>% select(Date,Peru_total) 
 
 Chile = filter(data,data$Entity=="Chile")
-colnames(Chile)[4] <- 'Chile_total' 
+colnames(Chile)[3] <- 'Chile_total' 
 Chile = Chile %>% select(Date,Chile_total) 
 
 # multimerge
@@ -299,17 +300,17 @@ write.csv(Latin_totalcase6, file="Latin_totalcase6.csv")
 Latin_Index <- read.csv("Latin_Index.csv")
 ##Remove the first column
 Latin_Index<- Latin_Index[,-1]
-Latin_Index_mean <- apply(Latin_Index[1:419,2:7], 2, mean,na.rm=T)  
+Latin_Index_mean <- apply(Latin_Index[1:799,2:7], 2, mean,na.rm=T)  
 Latin_Index_mean   
+#Brazil_Index Argentina_Index  Colombia_Index    Mexico_Index  Peru_Index     Chile_Index 
+#60.73118        68.07453        63.32868        53.40246       70.37180        62.71433 
 
-#Iran_Index Saudi_Arabia_index     Pakistan_index         Iraq_Index        Qatar_Index        Egypt_Index 
-#51.80103           55.24105           54.81881           62.92697           60.56647           54.73883 
 
-Latin_Index_Median <- apply(Latin_Index[1:419,2:7], 2, median,na.rm=T)  
+Latin_Index_Median <- apply(Latin_Index[1:799,2:7], 2, median,na.rm=T)  
 Latin_Index_Median
 
-#Iran_Index Saudi_Arabia_index     Pakistan_index         Iraq_Index        Qatar_Index        Egypt_Index 
-#58.80              57.41              58.80              61.11              64.81              62.96 
+#Brazil_Index Argentina_Index  Colombia_Index    Mexico_Index  Peru_Index     Chile_Index 
+#61.570          77.310          61.575          60.650         74.070          78.240
 
 class(Latin_Index_Median)
 
@@ -319,10 +320,14 @@ Index_Median = matrix(Latin_Index_Median)
 Entity = c("Brazil","Argentina","Colombia","Mexico","Peru","Chile")
 
 Latin_Total = Latin_totalcase6
-Total_cases = Latin_Total[392,]
+Total_cases = Latin_Total[799,]
 Total_cases = Total_cases[,-1] 
 class(Total_cases)
 Total_cases
+#Brazil_total Argentina_total Colombia_total Mexico_total
+#799     29532810         8990413        6079231      5624954
+#Peru_total Chile_total
+#799    3539400     3353259
 colnames(Total_cases) <- NULL
 rownames(Total_cases) <- NULL
 #unlist(Total_cases)
@@ -330,7 +335,7 @@ Total_cases
 Total_cases <- t(Total_cases)
 
 Casepermillion = Latin_permillon6 
-Casepermillion = Casepermillion[392,]
+Casepermillion = Casepermillion[799,]
 Casepermillion = Casepermillion[,-1] 
 class(Casepermillion)
 Casepermillion
@@ -341,7 +346,7 @@ Casepermillion
 Casepermillion<- t(Casepermillion)
 Casepermillion
 
-lastday_index = Latin_Index[418,]
+lastday_index = Latin_Index[799,]
 lastday_index = lastday_index[,-1] 
 class(lastday_index)
 lastday_index
